@@ -37,8 +37,11 @@ type (
 		StatusCodes map[string]int `json:"status_codes"`
 		// Errors is a set of unique errors returned by the targets during the attack.
 		Errors []string `json:"errors"`
+		// Targets is a set of unique targets during the attack.
+		Targets []string `json:"targets"`
 
 		errors    map[string]struct{}
+		targets   map[string]struct{}
 		success   uint64
 		latencies *quantile.Estimator
 	}
@@ -107,6 +110,13 @@ func (m *Metrics) Add(r *Result) {
 			m.Errors = append(m.Errors, r.Error)
 		}
 	}
+
+	if r.Target != "" {
+		if _, ok := m.targets[r.Target]; !ok {
+			m.targets[r.Target] = struct{}{}
+			m.Targets = append(m.Targets, r.Target)
+		}
+	}
 }
 
 // Close implements the Close method of the Report interface by computing
@@ -132,6 +142,10 @@ func (m *Metrics) init() {
 
 	if m.errors == nil {
 		m.errors = map[string]struct{}{}
+	}
+
+	if m.targets == nil {
+		m.targets = map[string]struct{}{}
 	}
 
 	if m.latencies == nil {

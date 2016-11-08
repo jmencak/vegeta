@@ -22,6 +22,7 @@ type Result struct {
 	BytesOut  uint64        `json:"bytes_out"`
 	BytesIn   uint64        `json:"bytes_in"`
 	Error     string        `json:"error"`
+	Target    string        `json:"target"`
 }
 
 // End returns the time at which a Result ended.
@@ -87,17 +88,19 @@ func NewEncoder(r io.Writer) Encoder {
 func (enc Encoder) Encode(r *Result) error { return enc(r) }
 
 // NewCSVEncoder returns an Encoder that dumps the given *Result as a CSV
-// record with six columns. The columns are: UNIX timestamp in ns since epoch,
-// HTTP status code, request latency in ns, bytes out, bytes in, and lastly the error.
+// record with seven columns. The columns are: UNIX timestamp in ns since epoch,
+// HTTP status code, request latency in ns, bytes out, bytes in, the error
+// and lastly the target.
 func NewCSVEncoder(w io.Writer) Encoder {
 	return func(r *Result) error {
-		_, err := fmt.Fprintf(w, "%d,%d,%d,%d,%d,\"%s\"\n",
+		_, err := fmt.Fprintf(w, "%d,%d,%d,%d,%d,\"%s\",\"%s\"\n",
 			r.Timestamp.UnixNano(),
 			r.Code,
 			r.Latency.Nanoseconds(),
 			r.BytesOut,
 			r.BytesIn,
 			r.Error,
+			r.Target,
 		)
 		return err
 	}

@@ -263,6 +263,9 @@ func (a *Attacker) hit(tr Targeter, tm time.Time) *Result {
 		res.Error = r.Status
 	}
 
+//	res.Target = fmt.Sprintf("%s://%s%s", r.Request.URL.Scheme, r.Request.URL.Host, r.Request.URL.Path)
+	res.Target = fmt.Sprintf("%s", tgt.URL)	// use tgt.Method too?
+
 	return &res
 }
 
