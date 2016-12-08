@@ -93,7 +93,7 @@ func (enc Encoder) Encode(r *Result) error { return enc(r) }
 // and lastly the target.
 func NewCSVEncoder(w io.Writer) Encoder {
 	return func(r *Result) error {
-		_, err := fmt.Fprintf(w, "%d,%d,%d,%d,%d,\"%s\",\"%s\"\n",
+		_, err := fmt.Fprintf(w, "%d,%d,%d,%d,%d,%s,%s\n",
 			r.Timestamp.UnixNano(),
 			r.Code,
 			r.Latency.Nanoseconds(),
